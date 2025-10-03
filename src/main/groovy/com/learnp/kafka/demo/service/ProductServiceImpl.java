@@ -1,14 +1,13 @@
 package com.learnp.kafka.demo.service;
 
 import com.learnp.kafka.demo.CreateProductRequest;
-import com.learnp.kafka.demo.ProductCreateEvent;
+import com.practice.kafkaconsumer.core.ProductCreateEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
