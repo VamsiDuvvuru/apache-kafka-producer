@@ -3,10 +3,12 @@ package com.learnp.kafka.demo.service;
 import com.learnp.kafka.demo.CreateProductRequest;
 import com.practice.kafkaconsumer.core.ProductCreateEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 
@@ -36,12 +38,20 @@ public class ProductServiceImpl implements ProductService{
 //            } else {
 //                log.info("Unable to send message : " + ex.getMessage());
 //            }
+
 //        });
+
+        //adding unique id in the headers
+        ProducerRecord <String , ProductCreateEvent> producerRecord
+                = new ProducerRecord<>("product-event" , productId , productCreateEvent);
+        producerRecord.headers().add("key" , UUID.randomUUID().toString().getBytes(StandardCharsets.UTF_8));
+        producerRecord.headers().add("messageId" , productId.getBytes(StandardCharsets.UTF_8));
 
         //synchronously send the message to kafka topic
         SendResult<String , ProductCreateEvent> sendResult
-                = kafkaTemplate.send("product-event" , productId , productCreateEvent)
+                = kafkaTemplate.send(producerRecord)
                 .get();
+
         log.info("topic : " + sendResult.getRecordMetadata().topic());
         log.info("partition : " + sendResult.getRecordMetadata().partition());
         log.info("offset : " + sendResult.getRecordMetadata().offset());
